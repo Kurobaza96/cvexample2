@@ -950,10 +950,6 @@
                 <div class="page-title">
                   <h2>Contact <span>Me</span></h2>
                 </div>
-                
-                <div class="block-title">
-                   <h3>Under <span>Construction</span></h3>
-                </div>
 
                 <div class="section-content">
 
@@ -962,7 +958,7 @@
                     <div class="col-xs-12 col-sm-4">
                       <div class="lm-info-block gray-default">
                         <i class="lnr lnr-map-marker"></i>
-                        <h4>Zone 12</h4>
+                        <h4>Zone 12, Guatemala City</h4>
                         <span class="lm-info-block-value"></span>
                         <span class="lm-info-block-text"></span>
                       </div>
@@ -976,7 +972,7 @@
 
                       <div class="lm-info-block gray-default">
                         <i class="lnr lnr-envelope"></i>
-                        <h4>emanuel.josue.herrera@gmail.com</h4>                        
+                        <h4>emanuel.josue.herrera@gmail.com</h4>
                         <span class="lm-info-block-value"></span>
                         <span class="lm-info-block-text"></span>
                       </div>
@@ -993,56 +989,59 @@
                     <!-- Contact Form -->
                     <div class="col-xs-12 col-sm-8">
                       <div id="map" class="map">
-                          <div class="lmpixels-map">
-                            	<iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=San%20Francisco%2C%20S601%20Townsend%20Street%2C%20California%2C%20USA&t=m&z=16&output=embed&iwloc=near&output=embed"></iframe>
-                            </div>
+                        <div class="lmpixels-map">
+                          <iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+                            src="https://maps.google.com/maps?q=Zona%2012%2C%20Ciudad%20de%20Guatemala%2C%20Guatemala&t=m&z=14&output=embed&iwloc=near"></iframe>
+                        </div>
                       </div>
+
                       <div class="block-title">
                         <h3>How Can I <span>Help You?</span></h3>
                       </div>
 
-                      <form id="contact_form" class="contact-form" action="https://api.web3forms.com/submit" method="POST">
+                      <!-- Success / Error message -->
+                      <div id="contact_result" style="display:none; padding: 12px 16px; margin-bottom: 18px; border-radius: 4px; font-size: 14px; font-weight: 500;"></div>
+
+                      <form id="contact_form" class="contact-form">
                         <input type="hidden" name="access_key" value="d3854de3-73b3-4218-baed-6db3e455f6cd">
-                        <div class="messages"></div>                        
+                        <!-- Honeypot anti-spam -->
+                        <input type="checkbox" name="botcheck" style="display:none;">
+
                         <div class="controls two-columns">
                           <div class="fields clearfix">
                             <div class="left-column">
                               <div class="form-group form-group-with-icon">
-                                <input id="form_name" type="text" name="name" class="form-control" placeholder="" required="required" data-error="Name is required.">
+                                <input id="form_name" type="text" name="name" class="form-control" placeholder="" required>
                                 <label>Full Name</label>
                                 <div class="form-control-border"></div>
-                                <div class="help-block with-errors"></div>
                               </div>
 
                               <div class="form-group form-group-with-icon">
-                                <input id="form_email" type="email" name="email" class="form-control" placeholder="" required="required" data-error="Valid email is required.">
+                                <input id="form_email" type="email" name="email" class="form-control" placeholder="" required>
                                 <label>Email Address</label>
                                 <div class="form-control-border"></div>
-                                <div class="help-block with-errors"></div>
                               </div>
 
                               <div class="form-group form-group-with-icon">
-                                <input id="form_subject" type="text" name="subject" class="form-control" placeholder="" required="required" data-error="Subject is required.">
+                                <input id="form_subject" type="text" name="subject" class="form-control" placeholder="" required>
                                 <label>Subject</label>
                                 <div class="form-control-border"></div>
-                                <div class="help-block with-errors"></div>
                               </div>
                             </div>
                             <div class="right-column">
                               <div class="form-group form-group-with-icon">
-                                <textarea id="form_message" name="message" class="form-control" placeholder="" rows="7" required="required" data-error="Please, leave me a message."></textarea>
+                                <textarea id="form_message" name="message" class="form-control" placeholder="" rows="7" required></textarea>
                                 <label>Message</label>
                                 <div class="form-control-border"></div>
-                                <div class="help-block with-errors"></div>
                               </div>
                             </div>
                           </div>
-                          <input type="hidden" name="redirect" value="https://web3forms.com/success">
-                          <button class="button btn-send" type="submit">Submit Form</button>
+
+                          <button id="contact_submit" class="button btn-send" type="submit">Send Message</button>
                         </div>
                       </form>
                     </div>
-                    <!-- End of Contact Form , class="button btn-send"-->
+                    <!-- End of Contact Form -->
                   </div>
 
                 </div>
@@ -1069,6 +1068,66 @@
 
     <script src="js/validator.js"></script>
     <script src="js/main.js"></script>
+
+    <!-- Contact Form Handler -->
+    <script>
+      (function () {
+        var form   = document.getElementById('contact_form');
+        var btn    = document.getElementById('contact_submit');
+        var result = document.getElementById('contact_result');
+
+        if (!form) return;
+
+        function showResult(success, msg) {
+          result.style.display = 'block';
+          result.textContent   = msg;
+          if (success) {
+            result.style.background = 'rgba(4,180,224,0.15)';
+            result.style.border     = '1px solid #04b4e0';
+            result.style.color      = '#04b4e0';
+          } else {
+            result.style.background = 'rgba(220,53,69,0.12)';
+            result.style.border     = '1px solid #dc3545';
+            result.style.color      = '#ff6b7a';
+          }
+        }
+
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+
+          btn.disabled       = true;
+          btn.textContent    = 'Sending…';
+          result.style.display = 'none';
+
+          var data = new FormData(form);
+
+          fetch('https://api.web3forms.com/submit', {
+            method : 'POST',
+            body   : data
+          })
+          .then(function (res) { return res.json(); })
+          .then(function (json) {
+            if (json.success) {
+              showResult(true, '✓ Message sent! I\'ll get back to you soon.');
+              form.reset();
+              /* reset floating labels */
+              form.querySelectorAll('.form-control').forEach(function(el){
+                el.dispatchEvent(new Event('change'));
+              });
+            } else {
+              showResult(false, '✗ ' + (json.message || 'Something went wrong. Please try again.'));
+            }
+          })
+          .catch(function () {
+            showResult(false, '✗ Network error. Please check your connection and try again.');
+          })
+          .finally(function () {
+            btn.disabled    = false;
+            btn.textContent = 'Send Message';
+          });
+        });
+      })();
+    </script>
   <script defer="" src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" data-cf-beacon="{" rayid":"9043a3ca3e587758","version":"2025.1.0","r":1,"token":"94b99c0576dc45bf9d669fb5e9256829","servertiming":{"name":{"cfextpri":true,"cfl4":true,"cfspeedbrain":true,"cfcachestatus":true}}}"="" crossorigin="anonymous"></script>
 
 
